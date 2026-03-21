@@ -54,7 +54,7 @@ export function DiseaseDetection() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/ml/predict", {
+      const response = await fetch("https://paudhamitra-6zhw.onrender.com/api/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image: selectedImage }),
