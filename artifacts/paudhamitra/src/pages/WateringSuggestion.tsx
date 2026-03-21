@@ -36,7 +36,7 @@ interface WateringResult {
 }
 
 async function fetchWeather(city: string): Promise<WeatherData> {
-  const res = await fetch(`/api/weather?q=${encodeURIComponent(city)}`);
+  const res = await fetch(`https://paudhamitra-6zhw.onrender.com/api/weather?q=${encodeURIComponent(city)}`);
   const data = await res.json();
   if (!res.ok) {
     if (res.status === 404) throw new Error(`City "${city}" not found. Try a different city name.`);
