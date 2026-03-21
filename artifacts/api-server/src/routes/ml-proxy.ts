@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import http from "http";
+import https from "https";
 
 const router: IRouter = Router();
 
@@ -7,7 +7,7 @@ const ML_PORT = process.env.ML_PORT || "5001";
 
 function proxyToML(req: Request, res: Response, targetPath: string) {
   const options = {
-    hostname: "https://paudhamitra-6zhw.onrender.com",
+    hostname: "paudhamitra-6zhw.onrender.com",
     port: 443,
     path: targetPath,
     method: req.method,
@@ -16,7 +16,7 @@ function proxyToML(req: Request, res: Response, targetPath: string) {
     },
   };
 
-  const proxyReq = http.request(options, (proxyRes) => {
+  const proxyReq = https.request(options, (proxyRes) => {
     res.status(proxyRes.statusCode || 500);
     proxyRes.pipe(res);
   });
