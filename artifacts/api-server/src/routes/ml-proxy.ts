@@ -7,8 +7,8 @@ const ML_PORT = process.env.ML_PORT || "5001";
 
 function proxyToML(req: Request, res: Response, targetPath: string) {
   const options = {
-    hostname: "127.0.0.1",
-    port: parseInt(ML_PORT),
+    hostname: "https://paudhamitra-6zhw.onrender.com",
+    port: 443,
     path: targetPath,
     method: req.method,
     headers: {
