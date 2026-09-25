@@ -58,7 +58,7 @@ const plantDatabase: Record<string, PlantData> = {
   lavender: {
     name: "Lavender",
     scientificName: "Lavandula angustifolia",
-    image: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.pexels.com/photos/128883/lavender-flowers-purple-flowers-blue-flowers-128883.jpeg",
     planting: "Plant in spring after frost danger has passed. Space 18-24 inches apart. Slightly raised beds improve drainage and help the plant thrive.",
     watering: "Water deeply but infrequently, once established. Allow soil to dry out between waterings. Overwatering is the most common cause of lavender death.",
     sunlight: "Full sun (6-8 hours daily). Lavender loves heat and light. Poor sunlight leads to leggy growth and fewer blooms.",
