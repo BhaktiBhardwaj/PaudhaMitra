@@ -36,11 +36,39 @@ interface WateringResult {
 }
 
 async function fetchWeather(city: string): Promise<WeatherData> {
-  const res = await fetch(`https://paudhamitra-6zhw.onrender.com/api/weather?q=${encodeURIComponent(city)}`);
-  const data = await res.json();
+  const res = await fetch(
+    `https://paudhamitra-6zhw.onrender.com/api/weather?q=${encodeURIComponent(city)}`
+  );
+
+  const responseText = await res.text();
+
+  console.log("Weather API Status:", res.status);
+  console.log("Weather API Response:", responseText);
+
   if (!res.ok) {
-    if (res.status === 404) throw new Error(`City "${city}" not found. Try a different city name.`);
-    throw new Error(data.error || `Weather fetch failed (${res.status})`);
+    try {
+      const errorData = JSON.parse(responseText);
+
+      if (res.status === 404) {
+        throw new Error(`City "${city}" not found. Try a different city name.`);
+      }
+
+      throw new Error(errorData.error || `Weather fetch failed (${res.status})`);
+    } catch {
+      throw new Error(
+        `Weather API returned an invalid response (${res.status}).`
+      );
+    }
+  }
+
+  let data;
+
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    throw new Error(
+      "Weather API returned HTML instead of JSON. Please check the backend API."
+    );
   }
   return {
     temperature: Math.round(data.main.temp * 10) / 10,

@@ -6,6 +6,7 @@ import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 CORS(app)
@@ -13,6 +14,10 @@ CORS(app)
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "paudhamitra_model.keras")
 
 model = None
+
+load_dotenv()
+
+OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 
 CLASS_NAMES = [
     "Bacterial Spot",
@@ -169,6 +174,32 @@ def predict():
     
     except Exception as e:
         print(f"Prediction error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+import requests
+
+@app.route("/api/weather", methods=["GET"])
+def get_weather():
+    city = request.args.get("q")
+    if not city:
+        return jsonify({"error": "City parameter 'q' is required"}), 400
+
+    api_key = os.environ.get("OPENWEATHER_API_KEY")
+    if not api_key:
+        return jsonify({"error": "OPENWEATHER_API_KEY is not configured on the server"}), 500
+
+    try:
+        url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={api_key}"
+        res = requests.get(url, timeout=10)
+        data = res.json()
+
+        if res.status_code != 200:
+            return jsonify({"error": data.get("message", "Failed to fetch weather data")}), res.status_code
+
+        return jsonify(data)
+
+    except Exception as e:
+        print(f"Weather API error: {e}")
         return jsonify({"error": str(e)}), 500
 
 @app.route("/api/healthz", methods=["GET"])
