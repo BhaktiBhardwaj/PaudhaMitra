@@ -1,4 +1,8 @@
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
 import io
 import json
 import base64
@@ -31,7 +35,6 @@ def load_model():
             model = None
     return model
 
-# Pre-load the Keras model immediately when Gunicorn boots up
 try:
     load_model()
     if model:
