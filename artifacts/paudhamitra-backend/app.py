@@ -8,16 +8,49 @@ from flask_cors import CORS
 from PIL import Image
 from dotenv import load_dotenv
 
+load_model()
+
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "paudhamitra_model.keras")
 
+
 model = None
+
+try:
+    import keras
+    if os.path.exists(MODEL_PATH):
+        model = keras.models.load_model(MODEL_PATH)
+        print("Model pre-loaded successfully!")
+except Exception as e:
+    print(f"Pre-load model error: {e}")
 
 load_dotenv()
 
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
+
+try:
+    import keras
+    if os.path.exists(MODEL_PATH):
+        model = keras.models.load_model(MODEL_PATH)
+        print(f"Model pre-loaded successfully from {MODEL_PATH}")
+except Exception as e:
+    print(f"Pre-load model error: {e}")
+    model = None
+
+
+def load_model():
+    global model
+    if model is None and os.path.exists(MODEL_PATH):
+        try:
+            import keras
+            model = keras.models.load_model(MODEL_PATH)
+            print(f"Model loaded successfully from {MODEL_PATH}")
+        except Exception as e:
+            print(f"Error loading model: {e}")
+            model = None
+    return model
 
 CLASS_NAMES = [
     "Bacterial Spot",
@@ -105,17 +138,6 @@ DISEASE_INFO = {
     }
 }
 
-def load_model():
-    global model
-    if model is None:
-        try:
-            import keras
-            model = keras.models.load_model(MODEL_PATH)
-            print(f"Model loaded successfully from {MODEL_PATH}")
-        except Exception as e:
-            print(f"Error loading model: {e}")
-            model = None
-    return model
 
 def preprocess_image(image_data):
     if image_data.startswith("data:"):
