@@ -226,7 +226,7 @@ export function Detection() {
                   )}
                   <div>
                     <p className="text-sm text-foreground/60">Diagnosis Result</p>
-                    <p className="text-xl font-bold text-primary">{result.}</p>
+                    <p className="text-xl font-bold text-primary">{result.disease}</p>
                   </div>
                 </div>
 
