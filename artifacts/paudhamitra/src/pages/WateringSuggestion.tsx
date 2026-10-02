@@ -37,8 +37,8 @@ interface WateringResult {
 
 async function fetchWeather(city: string): Promise<WeatherData> {
   const res = await fetch(
-    `https://paudhamitra-6zhw.onrender.com/api/weather?q=${encodeURIComponent(city)}`
-  );
+  `https://paudhamitra-6zhw.onrender.com/api/weather?q=${encodeURIComponent(city)}`
+);
 
   const responseText = await res.text();
 
