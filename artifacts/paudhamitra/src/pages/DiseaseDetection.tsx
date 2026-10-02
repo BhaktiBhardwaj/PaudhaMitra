@@ -15,41 +15,44 @@ export function DiseaseDetection() {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-const handleImageUpload = (file: File) => {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.src = e.target?.result as string;
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const MAX_SIZE = 500;
-      let width = img.width;
-      let height = img.height;
+  const handleImageUpload = (file: File) => {
+    setResult(null);
+    setError(null);
 
-      if (width > height) {
-        if (width > MAX_SIZE) {
-          height *= MAX_SIZE / width;
-          width = MAX_SIZE;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.src = e.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_SIZE = 500;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height *= MAX_SIZE / width;
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width *= MAX_SIZE / height;
+            height = MAX_SIZE;
+          }
         }
-      } else {
-        if (height > MAX_SIZE) {
-          width *= MAX_SIZE / height;
-          height = MAX_SIZE;
-        }
-      }
 
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      ctx?.drawImage(img, 0, 0, width, height);
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
 
-      // Compress to lightweight JPEG base64
-      const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
-      setSelectedImage(compressedBase64);
+        // Compress to lightweight JPEG base64
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+        setSelectedImage(compressedBase64);
+      };
     };
+    reader.readAsDataURL(file);
   };
-  reader.readAsDataURL(file);
-};
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -59,13 +62,7 @@ const handleImageUpload = (file: File) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
-        setResult(null);
-        setError(null);
-      };
-      reader.readAsDataURL(file);
+      handleImageUpload(file);
     }
   };
 
@@ -113,10 +110,10 @@ const handleImageUpload = (file: File) => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Plant Disease Detection
+            Plant  Detection
           </h1>
           <p className="text-lg text-foreground/70">
-            Upload a photo of your plant leaf to detect diseases using AI
+            Upload a photo of your plant leaf to detect s using AI
           </p>
         </div>
 
@@ -197,7 +194,7 @@ const handleImageUpload = (file: File) => {
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Ready to Analyze</h3>
                   <p className="text-foreground/60 text-sm">
-                    Upload an image of your plant leaf and click Analyze to detect diseases using our AI model.
+                    Upload an image of your plant leaf and click Analyze to detect s using our AI model.
                   </p>
                 </div>
               </div>
