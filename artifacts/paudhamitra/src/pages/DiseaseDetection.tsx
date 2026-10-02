@@ -15,18 +15,41 @@ export function DiseaseDetection() {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
-        setResult(null);
-        setError(null);
-      };
-      reader.readAsDataURL(file);
-    }
+const handleImageUpload = (file: File) => {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.src = e.target?.result as string;
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const MAX_SIZE = 500;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        }
+      } else {
+        if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(img, 0, 0, width, height);
+
+      // Compress to lightweight JPEG base64
+      const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+      setSelectedImage(compressedBase64);
+    };
   };
+  reader.readAsDataURL(file);
+};
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
