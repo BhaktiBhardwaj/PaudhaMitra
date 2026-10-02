@@ -9,7 +9,7 @@ interface PredictionResult {
   topPredictions?: { name: string; confidence: number }[];
 }
 
-export function Detection() {
+export function DiseaseDetection() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<PredictionResult | null>(null);
