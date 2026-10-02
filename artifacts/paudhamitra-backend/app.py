@@ -2,43 +2,22 @@ import os
 import io
 import json
 import base64
+import requests
 import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 from dotenv import load_dotenv
 
-load_model()
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "paudhamitra_model.keras")
-
-
-model = None
-
-try:
-    import keras
-    if os.path.exists(MODEL_PATH):
-        model = keras.models.load_model(MODEL_PATH)
-        print("Model pre-loaded successfully!")
-except Exception as e:
-    print(f"Pre-load model error: {e}")
-
-load_dotenv()
-
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 
-try:
-    import keras
-    if os.path.exists(MODEL_PATH):
-        model = keras.models.load_model(MODEL_PATH)
-        print(f"Model pre-loaded successfully from {MODEL_PATH}")
-except Exception as e:
-    print(f"Pre-load model error: {e}")
-    model = None
-
+model = None
 
 def load_model():
     global model
@@ -51,6 +30,14 @@ def load_model():
             print(f"Error loading model: {e}")
             model = None
     return model
+
+# Pre-load the Keras model immediately when Gunicorn boots up
+try:
+    load_model()
+    if model:
+        print("Model pre-loaded successfully on startup!")
+except Exception as e:
+    print(f"Startup model loading failed: {e}")
 
 CLASS_NAMES = [
     "Bacterial Spot",
@@ -138,7 +125,6 @@ DISEASE_INFO = {
     }
 }
 
-
 def preprocess_image(image_data):
     if image_data.startswith("data:"):
         image_data = image_data.split(",")[1]
@@ -198,8 +184,6 @@ def predict():
         print(f"Prediction error: {e}")
         return jsonify({"error": str(e)}), 500
 
-import requests
-
 @app.route("/api/weather", methods=["GET"])
 def get_weather():
     city = request.args.get("q")
@@ -233,7 +217,7 @@ def health():
     })
 
 if __name__ == "__main__":
-    port = int(os.environ.get("ML_PORT", 5001))
+    port = int(os.environ.get("PORT", os.environ.get("ML_PORT", 5001)))
     print(f"Starting PaudhaMitra ML server on port {port}")
     load_model()
     app.run(host="0.0.0.0", port=port, debug=False)
