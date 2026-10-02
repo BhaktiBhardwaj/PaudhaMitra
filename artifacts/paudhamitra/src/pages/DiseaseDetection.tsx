@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Upload, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 interface PredictionResult {
-  : string;
+  disease: string;
   confidence: number;
   treatment: string;
   symptoms: string;
@@ -103,7 +103,7 @@ export function Detection() {
     }
   };
 
-  const isHealthy = result?.?.toLowerCase().includes("healthy");
+  const isHealthy = result?.disease?.toLowerCase().includes("healthy");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted to-background py-12">
